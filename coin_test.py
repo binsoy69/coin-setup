@@ -12,6 +12,14 @@ COIN_TIMEOUT = 0.5  # seconds to wait before assuming pulse group is done
 pulse_count = 0
 last_pulse_time = time.time()
 
+# Pulse-to-coin mapping
+COIN_MAP = {
+    1: "1 PHP",
+    5: "5 PHP",
+    10: "10 PHP",
+    20: "20 PHP"
+}
+
 def coin_pulse_callback(channel):
     global pulse_count, last_pulse_time
 
@@ -34,7 +42,8 @@ try:
     while True:
         now = time.time()
         if pulse_count > 0 and (now - last_pulse_time > COIN_TIMEOUT):
-            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Coin inserted with {pulse_count} pulse(s)")
+            coin_value = COIN_MAP.get(pulse_count, f"Unknown ({pulse_count} pulses)")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Coin inserted: {coin_value}")
             # Reset for next coin
             pulse_count = 0
         time.sleep(0.05)
