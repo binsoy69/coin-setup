@@ -3,7 +3,7 @@ import time
 
 # Map denominations to GPIO pins
 DISPENSER_SERVOS = {
-    "1": 4,
+    "1": 18,
     "5": 17,
     "10": 27,
     "20": 22
@@ -11,8 +11,8 @@ DISPENSER_SERVOS = {
 
 # Servo angles
 NEUTRAL = 90
-FORWARD = 120
-BACKWARD = 60
+FORWARD = 130
+BACKWARD = 0
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)

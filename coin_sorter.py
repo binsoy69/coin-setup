@@ -20,8 +20,8 @@ CATEGORY_2 = ["10", "20"]
 
 # Servo angles
 NEUTRAL= 90
-LEFT = 45
-RIGHT= 135
+LEFT = 60
+RIGHT= 120
 
 # Timing control
 COIN_TIMEOUT = 0.5  # Max time between pulses in a group
