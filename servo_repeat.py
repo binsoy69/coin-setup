@@ -1,38 +1,39 @@
 import RPi.GPIO as GPIO
 import time
 
-# Set the GPIO pin connected to the orange signal wire
-SERVO_PIN = 18  # Change this if you connected to another pin
+# Constants
+SERVO_PIN = 18  # Change this to the correct GPIO pin number
+FREQ = 50       # 50Hz for hobby servo
 
-# Set up GPIO
+# Setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SERVO_PIN, GPIO.OUT)
 
-# Set PWM to 50Hz (standard for hobby servos)
-servo = GPIO.PWM(SERVO_PIN, 50)
+servo = GPIO.PWM(SERVO_PIN, FREQ)
 servo.start(0)
 
-
-FORWARD = 130
-BACKWARD = 0
-
 def set_angle(angle):
-    """Move servo to specified angle (0 to 180 degrees)"""
-    duty = 2 + (angle / 18)  # Convert angle to duty cycle
+    """Convert angle (0-180) to PWM duty cycle and send it to servo."""
+    duty = 2 + (angle / 18)  # Map angle to duty cycle
     servo.ChangeDutyCycle(duty)
-    time.sleep(0.5)
+    time.sleep(0.002)         # Short delay for smooth movement
     servo.ChangeDutyCycle(0)  # Stop signal to avoid jitter
-    
+
 try:
-	while True:
-		set_angle(BACKWARD)
-		time.sleep(0.5)
-		set_angle(FORWARD)
-		
+    while True:
+        # Sweep from 0 to 160 degrees
+        for pos in range(0, 180):  # 0 to 160
+            set_angle(pos)
+
+        # Sweep from 160 back to 0 degrees
+        for pos in range(180, -1, -1):  # 160 to 0
+            set_angle(pos)
+        time.sleep(3)
+
 except KeyboardInterrupt:
     print("Interrupted by user.")
 
 finally:
-	servo.stop()
-	GPIO.cleanup()
-	print("Servo test complete.")
+    servo.stop()
+    GPIO.cleanup()
+    print("Servo sweep test complete.")

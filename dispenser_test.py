@@ -9,19 +9,18 @@ DISPENSER_SERVOS = {
     "20": 22
 }
 
-# Servo angles
-NEUTRAL = 90
-FORWARD = 130
-BACKWARD = 0
-
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 servo_pwms = {}
 
+# Setup Angle
+BACKWARD = 0
+FORWARD = 160
+
 def set_angle(pin, angle):
     duty = 2 + (angle / 18)
     servo_pwms[pin].ChangeDutyCycle(duty)
-    time.sleep(0.5)
+    time.sleep(0.002)
     servo_pwms[pin].ChangeDutyCycle(0)
 
 def init_servos():
@@ -30,7 +29,7 @@ def init_servos():
         pwm = GPIO.PWM(pin, 50)
         pwm.start(0)
         servo_pwms[pin] = pwm
-        set_angle(pin, NEUTRAL)
+        set_angle(pin, BACKWARD)
         print(f"Initialized servo for {denom} on GPIO {pin}")
 
 def cleanup():
@@ -44,11 +43,12 @@ def dispense_coin(denom):
         print("Invalid denomination selected.")
         return
     print(f"Dispensing {denom} coin...")
-    set_angle(pin, FORWARD)
-    time.sleep(0.3)
-    set_angle(pin, BACKWARD)
-    time.sleep(0.3)
-    set_angle(pin, NEUTRAL)
+    # Sweep from 0 to 160 degrees
+    for pos in range(0, BACKWARD):  # 0 to 160
+        set_angle(pin,pos)
+	# Sweep from 160 back to 0 degrees
+    for pos in range(FORWARD, -1, -1):  # 160 to 0
+        set_angle(pin,pos)
     print("Dispensed.\n")
 
 # MAIN PROGRAM
